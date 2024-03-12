@@ -34,6 +34,34 @@ router.post('/TESTpdf', async (req, res) => {
   res.json(input);
 });
 
+router.post('/autosaveSAR', async (req, res) => {
+  //-------------------------------------
+  console.log("--TESTpdf--");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  let output = `NOK`
+  if (input[`ReqNo`] != undefined) {
+    
+    let resp = await axios.post('http://172.23.10.51:3002/KACReportData_LoadReport', {
+      "ReqNo":`${input[`ReqNo`]}`,
+    });
+    // return resp.data;
+    // console.log(resp.data);
+    if (resp.status == 200) {
+
+      if(`${resp.data}` !=`{}`){
+        base64ToPdf(resp.data, `${input[`ReqNo`]}.pdf`);
+        output = 'OK'
+      }
+
+    
+    }
+  }
+  //-------------------------------------
+  res.json(output);
+});
+
 
 
 module.exports = router;
